@@ -1,0 +1,26 @@
+{
+  "name": "issue-tracker",
+  "version": "1.0.0",
+  "description": "Create, assign and track tasks",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Task",
+    "tracker"
+  ],
+  "author": "Mike Udoh",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "mongoose": "^5.11.12",
+    "slugify": "^1.4.6"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.7"
+  }
+}
