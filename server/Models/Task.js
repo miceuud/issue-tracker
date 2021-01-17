@@ -7,20 +7,24 @@ const TaskSchema = new mongoose.Schema(
 			required: [true, 'please provide title '],
 		},
 		proirity: {
-			type: String,
+			type: [String],
 			required: [true, 'select a workflow'],
 			enum: ['low', 'medium', 'high'],
 			default: 'low',
 		},
 		status: {
-			type: String,
+			type: [String],
 			required: [true, 'select a workflow'],
 			enum: ['open', 'in progress', 'ready', 'close'],
 			default: 'open',
 		},
 		description: String,
+		assinged_to_user: {
+			type: String,
+		},
 		createdAt: {
 			type: Date,
+			Default: Date.now,
 		},
 		dueDate: {
 			type: Date,

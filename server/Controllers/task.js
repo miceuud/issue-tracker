@@ -1,8 +1,8 @@
 const Task = require('../Models/Task');
 
-// @desc     Fetch all projects
-// @route    POST api/v1/auth/register
-// @mode     PUBLIC
+// @desc     Fetch all tasks
+// @route    GET api/v1/tasks
+// @mode     PRIVATE
 exports.getTasks = async (req, res) => {
 	try {
 		const task = await Task.find();
@@ -22,9 +22,9 @@ exports.getTasks = async (req, res) => {
 	}
 };
 
-// @desc     Fetch all projects
-// @route    POST api/v1/auth/register
-// @mode     PUBLIC
+// @desc     Fetch a task
+// @route    GET api/v1/task/:taskId
+// @mode     PRIVATE
 exports.getTask = async (req, res) => {
 	try {
 		const task = await Task.findById(req.params.id);
@@ -43,9 +43,9 @@ exports.getTask = async (req, res) => {
 	}
 };
 
-// @desc     Fetch all projects
-// @route    POST api/v1/auth/register
-// @mode     PUBLIC
+// @desc     CREATE  a Task
+// @route    POST api/v1/task
+// @mode     PRIVATE
 exports.createTask = async (req, res) => {
 	try {
 		const task = await Task.create(req.body);
@@ -64,14 +64,14 @@ exports.createTask = async (req, res) => {
 	}
 };
 
-// @desc     Fetch all projects
-// @route    POST api/v1/auth/register
-// @mode     PUBLIC
+// @desc     UPDATE a Task
+// @route    PUT api/v1/task/:taskId
+// @mode     PRIVATE
 exports.updateTask = async (req, res) => {
 	const query = req.body;
 	try {
-    let task = await Task.findById(req.params.id);
-    
+		let task = await Task.findById(req.params.id);
+
 		if (task) {
 			task = await Task.findByIdAndUpdate(req.params.id, query, query, {
 				runValidators: true,
@@ -91,8 +91,8 @@ exports.updateTask = async (req, res) => {
 	}
 };
 
-// @desc     Creat a Projects
-// @route    POST api/v1/projects/
+// @desc     DELETE a Task
+// @route    DELETE api/v1/task/:taskId
 // @mode     PRIVATE
 exports.deleteTask = async (req, res) => {
 	try {
@@ -104,11 +104,9 @@ exports.deleteTask = async (req, res) => {
 			});
 		}
 	} catch (error) {
-		console.log(error);
 		res.status(500).json({
 			status: 'failed',
 			message: 'something went wrong, please try again',
 		});
 	}
 };
-

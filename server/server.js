@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const connectDb = require('./db_connection/DB_connection');
 const company = require('./Routes/companies');
 const user = require('./Routes/user');
@@ -10,12 +11,15 @@ const { errorHandler } = require('./util/errorHandler');
 // Connect to DB
 connectDb();
 
-// initialize server
+// initialize server   
 const app = express();
 
 // BodyParser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// parse cookie
+app.use(cookieParser());
 
 // import routes
 app.use('/api/v1/companies', company);

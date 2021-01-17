@@ -1,11 +1,11 @@
 const User = require('../Models/User');
 const joiSchema = require('../util/validator');
-const bcrypt = require('bcryptjs');
 
 // @desc     register a user
 // @route    POST api/v1/auth/register
 // @mode     PUBLIC
 exports.register = async (req, res) => {
+	let user;
 	const { fullname, password, email } = req.body;
 
 	try {
@@ -21,24 +21,31 @@ exports.register = async (req, res) => {
 
 		if (value) {
 			// check if its in the database
-			let user = await User.findOne({ email });
-			if (!user) {
-				user = await User.create({ fullname, password, email });
-			 	return res.status(201).json({
-					status: 'successful',
-					data: user,
+			 user = await User.findOne({ email });
+
+			if (user) {
+				return res.status(400).json({
+					status: 'failed',
+					message: 'user already exist',
 				});
 			}
-			return res.status(400).json({
-				status: 'failed',
-				message: 'user already exist',
+
+			user = await User.create({ fullname, password, email });
+
+			// sign Token
+			const token = user.getSignedJwtToken();
+
+			return res.status(201).json({
+				status: 'successful',
+				data: user,
+				token,
 			});
 		}
 	} catch (error) {
-		console.log(error.message);
+		
 		return res.status(400).json({
 			status: 'failed',
-			data: error.message,
+			data: error,
 		});
 	}
 };
@@ -48,27 +55,55 @@ exports.register = async (req, res) => {
 // @mode     PUBLIC
 exports.login = async (req, res) => {
 	const { email, password } = req.body;
+	let user;
 
-	try {
-		const user = await User.findOne({ email }).select('+password');
-
+	
+	// validate inputs
+	const value = await joiSchema.validateAsync(
+		{
+			email,
+			password,
+		},
+		// { presence: 'required' }                                   
+		);
+		
+		try {
+			if (value) user = await User.findOne({ email }).select('+password');
+			
+		
 		if (user) {
 			let pwd = await user.matchPassword(password);
 
-			if (pwd) {
+			if (!pwd) {
 				return res.status(200).json({
-					status: 'successful',
-					message: 'login successful',
+					status: 'failed',
+					message: 'username and password is not correct',
 				});
 			}
-			return res.status(200).json({
-				status: 'failed',
-				message: 'username and password is not correct',
-			});
-		}
-		// come bac and chec this 
 
-		throw new Error();
+			// sign token
+			const token = user.getSignedJwtToken();
+
+			// send token
+			const options = {
+				expires: new Date(Date.now() + 30 * 24 * 60 * 60 + 1000),
+				httpOnly: true,
+			};
+
+			
+			return res
+				.status(200)
+				.cookie('token', token, options)
+				.json({
+					status: 'successful',
+					message: 'login successful',
+					token
+				})
+		}
+		res.status(400).json({
+			status: 'failed',
+			message: 'user not found',
+		});
 	} catch (error) {
 		console.log(error);
 		res.status(400).json({

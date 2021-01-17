@@ -8,17 +8,15 @@ exports.getUsers = async (req, res) => {
 		const user = await User.find();
 		if (user) {
 			res.status(200).json({
-        status: 'successful',
-        count: user.length,
+				status: 'successful',
+				count: user.length,
 				data: user,
 			});
 		}
 	} catch (error) {
-    console.log(error)
-    res.status(500).json({
-      status: 'failed',
-      message:'something went wrong, please try again '
-    });
-  }
-	
+		res.status(500).json({
+			status: 'failed',
+			message: 'something went wrong, please try again ',
+		});
+	}
 };
